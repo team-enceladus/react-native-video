@@ -246,9 +246,23 @@ static NSString *const playbackRate = @"rate";
 
 - (void)setSrc:(NSDictionary *)source
 {
-  [self removePlayerTimeObserver];
-  [self removePlayerItemObservers];
-  _playerItem = [self playerItemForSource:source];
+    [self removePlayerTimeObserver];
+    [self removePlayerItemObservers];
+    if(!self.photosFrameworkExtension) {
+        self.photosFrameworkExtension = [RNPhotosFrameworkExtension new];
+    }
+    bool isAsset = [RCTConvert BOOL:[source objectForKey:@"isAsset"]];
+    NSString *loadedIdentifier = [self.photosFrameworkExtension startLoadingPhotosAsset:source bufferingCallback:self.onVideoBuffer andReactTag:self.reactTag andCompleteBlock:^(NSDictionary *source, AVPlayerItem *playerItem) {
+        [self setupVideoPlayback:source andPlayerItem:playerItem];
+    }];
+    
+    if(!loadedIdentifier) {
+        [self setupVideoPlayback:source andPlayerItem:[self playerItemForSource:source]];
+    }
+}
+-(void) setupVideoPlayback:(NSDictionary *)source andPlayerItem:(AVPlayerItem*)playerItem {
+
+  _playerItem = playerItem;
   [self addPlayerItemObservers];
 
   [_player pause];

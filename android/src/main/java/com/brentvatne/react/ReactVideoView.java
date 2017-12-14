@@ -201,11 +201,11 @@ public class ReactVideoView extends ScalableVideoView implements MediaPlayer.OnP
         }
     }
 
-    public void setSrc(final String uriString, final String type, final boolean isNetwork, final boolean isAsset) {
+    public void setSrc(final String uriString, final String type, final boolean isNetwork, final boolean isAsset, final ReadableMap requestHeaders) {
         setSrc(uriString,type,isNetwork,isAsset, requestHeaders, 0,0);
     }
 
-    public void setSrc(final String uriString, final String type, final boolean isNetwork, final boolean isAsset, final int expansionMainVersion, final int expansionPatchVersion) {
+    public void setSrc(final String uriString, final String type, final boolean isNetwork, final boolean isAsset, final ReadableMap requestHeaders, final int expansionMainVersion, final int expansionPatchVersion) {
 
         mSrcUriString = uriString;
         mSrcType = type;

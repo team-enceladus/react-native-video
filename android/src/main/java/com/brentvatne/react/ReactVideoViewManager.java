@@ -25,7 +25,7 @@ public class ReactVideoViewManager extends SimpleViewManager<ReactVideoView> {
     public static final String PROP_SRC_MAINVER = "mainVer";
     public static final String PROP_SRC_PATCHVER = "patchVer";
     public static final String PROP_SRC_IS_ASSET = "isAsset";
-    public static final String PROP_SRC_HEADERS = "headers";
+    public static final String PROP_SRC_HEADERS = "requestHeaders";
     public static final String PROP_RESIZE_MODE = "resizeMode";
     public static final String PROP_REPEAT = "repeat";
     public static final String PROP_PAUSED = "paused";

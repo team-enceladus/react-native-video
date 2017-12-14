@@ -26,7 +26,7 @@ public class ReactExoplayerViewManager extends ViewGroupManager<ReactExoplayerVi
     private static final String PROP_RESIZE_MODE = "resizeMode";
     private static final String PROP_REPEAT = "repeat";
     private static final String PROP_PAUSED = "paused";
-    private static final String PROP_SRC_HEADERS = "headers";
+    private static final String PROP_SRC_HEADERS = "requestHeaders";
     private static final String PROP_MUTED = "muted";
     private static final String PROP_VOLUME = "volume";
     private static final String PROP_SEEK = "seek";

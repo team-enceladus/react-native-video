@@ -25,6 +25,7 @@ public class ReactVideoViewManager extends SimpleViewManager<ReactVideoView> {
     public static final String PROP_SRC_MAINVER = "mainVer";
     public static final String PROP_SRC_PATCHVER = "patchVer";
     public static final String PROP_SRC_IS_ASSET = "isAsset";
+    public static final String PROP_SRC_HEADERS = "headers";
     public static final String PROP_RESIZE_MODE = "resizeMode";
     public static final String PROP_REPEAT = "repeat";
     public static final String PROP_PAUSED = "paused";
@@ -84,6 +85,7 @@ public class ReactVideoViewManager extends SimpleViewManager<ReactVideoView> {
                     src.getString(PROP_SRC_TYPE),
                     src.getBoolean(PROP_SRC_IS_NETWORK),
                     src.getBoolean(PROP_SRC_IS_ASSET),
+                    src.getMap(PROP_SRC_HEADERS),
                     mainVer,
                     patchVer
             );
@@ -93,7 +95,8 @@ public class ReactVideoViewManager extends SimpleViewManager<ReactVideoView> {
                     src.getString(PROP_SRC_URI),
                     src.getString(PROP_SRC_TYPE),
                     src.getBoolean(PROP_SRC_IS_NETWORK),
-                    src.getBoolean(PROP_SRC_IS_ASSET)
+                    src.getBoolean(PROP_SRC_IS_ASSET),
+                    src.getMap(PROP_SRC_HEADERS)
             );
         }
     }

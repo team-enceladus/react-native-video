@@ -9,6 +9,7 @@ import android.os.Message;
 import android.text.TextUtils;
 import android.util.Log;
 import android.widget.FrameLayout;
+import com.facebook.react.bridge.ReadableMap;
 
 import com.brentvatne.react.R;
 import com.brentvatne.receiver.AudioBecomingNoisyReceiver;
@@ -46,6 +47,7 @@ import com.google.android.exoplayer2.upstream.DataSource;
 import com.google.android.exoplayer2.upstream.DefaultBandwidthMeter;
 import com.google.android.exoplayer2.util.Util;
 
+import java.util.Map;
 import java.net.CookieHandler;
 import java.net.CookieManager;
 import java.net.CookiePolicy;
@@ -95,6 +97,7 @@ class ReactExoplayerView extends FrameLayout implements
     private String extension;
     private boolean repeat;
     private boolean disableFocus;
+    private Map<String, String> requestHeaders;
     // \ End props
 
     // React
@@ -339,7 +342,7 @@ class ReactExoplayerView extends FrameLayout implements
      * @return A new DataSource factory.
      */
     private DataSource.Factory buildDataSourceFactory(boolean useBandwidthMeter) {
-        return DataSourceUtil.getDefaultDataSourceFactory(getContext(), useBandwidthMeter ? BANDWIDTH_METER : null);
+        return DataSourceUtil.getDefaultDataSourceFactory(getContext(), useBandwidthMeter ? BANDWIDTH_METER : null, requestHeaders);
     }
 
     // AudioManager.OnAudioFocusChangeListener implementation
@@ -494,11 +497,13 @@ class ReactExoplayerView extends FrameLayout implements
 
     // ReactExoplayerViewManager public api
 
-    public void setSrc(final Uri uri, final String extension) {
+    public void setSrc(final Uri uri, final String extension, Map<String, String> headers) {
         if (uri != null) {
             this.srcUri = uri;
             this.extension = extension;
-            this.mediaDataSourceFactory = DataSourceUtil.getDefaultDataSourceFactory(getContext(), BANDWIDTH_METER);
+            this.requestHeaders = headers;
+            this.mediaDataSourceFactory = DataSourceUtil.getDefaultDataSourceFactory(getContext(), BANDWIDTH_METER, requestHeaders);
+  
         }
     }
 

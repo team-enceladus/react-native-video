@@ -23,6 +23,16 @@ export default class Video extends Component {
     this._root.setNativeProps(nativeProps);
   }
 
+  stringsOnlyObject(obj) {
+    const strObj = {};
+ 
+    Object.keys(obj).forEach(x => {
+      strObj[x] = obj[x].toString();
+    });
+ 
+    return strObj;
+  }
+
   seek = (time) => {
     this.setNativeProps({ seek: time });
   };
@@ -189,6 +199,7 @@ export default class Video extends Component {
         type: source.type || '',
         mainVer: source.mainVer || 0,
         patchVer: source.patchVer || 0,
+        requestHeaders: source.headers ? this.stringsOnlyObject(source.headers) : {}
       },
       onVideoLoadStart: this._onLoadStart,
       onVideoLoad: this._onLoad,

@@ -17,6 +17,7 @@ import com.facebook.react.uimanager.ThemedReactContext;
 import com.facebook.react.uimanager.events.RCTEventEmitter;
 import com.yqritc.scalablevideoview.ScalableType;
 import com.yqritc.scalablevideoview.ScalableVideoView;
+import com.facebook.react.bridge.ReadableMap;
 
 import com.android.vending.expansion.zipfile.APKExpansionSupport;
 import com.android.vending.expansion.zipfile.ZipResourceFile;
@@ -25,6 +26,7 @@ import com.yqritc.scalablevideoview.Size;
 
 import java.io.IOException;
 import java.util.HashMap;
+import javax.annotation.Nullable;
 import java.util.Map;
 
 public class ReactVideoView extends ScalableVideoView implements MediaPlayer.OnPreparedListener, MediaPlayer
@@ -84,6 +86,7 @@ public class ReactVideoView extends ScalableVideoView implements MediaPlayer.OnP
 
     private String mSrcUriString = null;
     private String mSrcType = "mp4";
+    private ReadableMap mRequestHeaders = null;
     private boolean mSrcIsNetwork = false;
     private boolean mSrcIsAsset = false;
     private ScalableType mResizeMode = ScalableType.LEFT_TOP;
@@ -199,7 +202,7 @@ public class ReactVideoView extends ScalableVideoView implements MediaPlayer.OnP
     }
 
     public void setSrc(final String uriString, final String type, final boolean isNetwork, final boolean isAsset) {
-        setSrc(uriString,type,isNetwork,isAsset,0,0);
+        setSrc(uriString,type,isNetwork,isAsset, requestHeaders, 0,0);
     }
 
     public void setSrc(final String uriString, final String type, final boolean isNetwork, final boolean isAsset, final int expansionMainVersion, final int expansionPatchVersion) {
@@ -210,7 +213,7 @@ public class ReactVideoView extends ScalableVideoView implements MediaPlayer.OnP
         mSrcIsAsset = isAsset;
         mMainVer = expansionMainVersion;
         mPatchVer = expansionPatchVersion;
-
+        mRequestHeaders = requestHeaders;
 
         mMediaPlayerValid = false;
         mVideoDuration = 0;
@@ -234,6 +237,9 @@ public class ReactVideoView extends ScalableVideoView implements MediaPlayer.OnP
 
                 if (cookie != null) {
                     headers.put("Cookie", cookie);
+                }
+                if (mRequestHeaders != null) {
+                    headers.putAll(toStringMap(mRequestHeaders));
                 }
 
                 setDataSource(mThemedReactContext, parsedUrl, headers);
@@ -282,9 +288,12 @@ public class ReactVideoView extends ScalableVideoView implements MediaPlayer.OnP
         }
 
         WritableMap src = Arguments.createMap();
+        WritableMap wRequestHeaders = Arguments.createMap();
+        wRequestHeaders.merge(mRequestHeaders);
         src.putString(ReactVideoViewManager.PROP_SRC_URI, uriString);
         src.putString(ReactVideoViewManager.PROP_SRC_TYPE, type);
         src.putBoolean(ReactVideoViewManager.PROP_SRC_IS_NETWORK, isNetwork);
+        src.putMap(ReactVideoViewManager.PROP_SRC_HEADERS, wRequestHeaders);
         if(mMainVer>0) {
             src.putInt(ReactVideoViewManager.PROP_SRC_MAINVER, mMainVer);
             if(mPatchVer>0) {
@@ -530,10 +539,10 @@ public class ReactVideoView extends ScalableVideoView implements MediaPlayer.OnP
         super.onAttachedToWindow();
 
         if(mMainVer>0) {
-            setSrc(mSrcUriString, mSrcType, mSrcIsNetwork,mSrcIsAsset,mMainVer,mPatchVer);
+            setSrc(mSrcUriString, mSrcType, mSrcIsNetwork, mSrcIsAsset, mRequestHeaders, mMainVer, mPatchVer);
         }
         else {
-            setSrc(mSrcUriString, mSrcType, mSrcIsNetwork,mSrcIsAsset);
+            setSrc(mSrcUriString, mSrcType, mSrcIsNetwork, mSrcIsAsset, mRequestHeaders);
         }
 
     }
@@ -564,5 +573,29 @@ public class ReactVideoView extends ScalableVideoView implements MediaPlayer.OnP
 
     @Override
     public void onHostDestroy() {
+    }
+
+     /**
+     * toStringMap converts a {@link ReadableMap} into a HashMap.
+     *
+     * @param readableMap The ReadableMap to be conveted.
+     * @return A HashMap containing the data that was in the ReadableMap.
+     * @see 'Adapted from https://github.com/artemyarulin/react-native-eval/blob/master/android/src/main/java/com/evaluator/react/ConversionUtil.java'
+     */
+    public static Map<String, String> toStringMap(@Nullable ReadableMap readableMap) {
+        if (readableMap == null)
+            return null;
+
+        com.facebook.react.bridge.ReadableMapKeySetIterator iterator = readableMap.keySetIterator();
+        if (!iterator.hasNextKey())
+            return null;
+
+        Map<String, String> result = new HashMap<>();
+        while (iterator.hasNextKey()) {
+            String key = iterator.nextKey();
+            result.put(key, readableMap.getString(key));
+        }
+
+        return result;
     }
 }
